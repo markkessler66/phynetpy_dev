@@ -1,0 +1,14 @@
+numpy>=1.23.5
+biopython>=1.8
+elfi>=0.8.4
+ete3>=3.1.2
+matplotlib
+newick
+python-nexus>=2.9.0
+scipy>=1.9.3
+pulp
+clr-loader
+
+[test]
+pytest
+pytest-cov

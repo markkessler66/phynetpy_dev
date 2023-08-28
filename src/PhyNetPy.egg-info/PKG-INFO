@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: PhyNetPy
+Version: 0.0.8
+Summary: PhyNetPy is a library to provide not only methods, but a framework for the analysis, inference, simulation, and visualization of phylogenetic networks and trees
+Home-page: https://github.com/NakhlehLab/PhyNetPy
+Author: Luay Nakhleh
+Author-email: nakhleh@rice.edu
+Project-URL: Bug Tracker, https://github.com/NakhlehLab/PhyNetPy/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Provides-Extra: test
+License-File: LICENSE
+
+# PhyNetPy
+
+PhyNetPy is a Python Library that provides some improved methods from PhyloNet, as well as a framework for the development of Bayesian/Simulation based methods and structures.
+
+The current version of this software is v0.1.0, which is the release for the Botany Conference in Boise for July 2023.
+
+This version is unstable, and only meant to provide tutorial functionality. A stable release is planned for September 1, 2023.
+
+To install PhyNetPy, simply open up a command line instance and execute the following:
+`pip install phynetpy`. 
+
+A tutorial and further instructions on how to use PhyNetPy will be made available on our website, https://phylogenomics.rice.edu
