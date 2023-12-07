@@ -3,8 +3,9 @@ Author: Mark Kessler
 
 Description: This file contains a model for computing Maximum Parsimony over data that includes allopolyploidization.
 
-Classes:
-
+Last Stable Edit: 12/5/23
+Included in version : 0.1.0
+Approved to Release Date : N/A
 
 """
 
@@ -53,8 +54,9 @@ Further documentation, code flow diagrams, and tutorials for this method can be 
 ########################
 ## EXCEPTION  HANDLER ##
 ########################
+
 class InferAllopError(Exception):
-    def __init__(self, message="Something went wrong during the execution of Infer MP Allop"):
+    def __init__(self, message="Something went wrong during the execution of MP-Sugar"):
         self.message = message
         super().__init__(self.message)
 
@@ -211,8 +213,8 @@ def generate_tree_from_clusters(tree_clusters:set)->DAG:
     nodes.append(root)
     
     #add all the accumulated nodes and edges
-    net.addEdges(edges, as_list=True)
-    net.addNodes(nodes)
+    net.add_edges(edges, as_list=True)
+    net.add_nodes(nodes)
         
     return net
 
@@ -282,11 +284,11 @@ def partition_gene_trees(gene_map : dict[str, list[str]], num_retic : int = 1, r
             clade_root : Node = clade.root()[0]
             clade_root.add_parent(new_node1)
             new_node1.set_parent([new_node2, new_node3])
-            clade.addEdges([new_node1, clade_root])
-            clade.addEdges([new_node2, new_node1])
-            clade.addEdges([new_node3, new_node1])
+            clade.add_edges([new_node1, clade_root])
+            clade.add_edges([new_node2, new_node1])
+            clade.add_edges([new_node3, new_node1])
 
-            clade.addNodes([new_node1, new_node2, new_node3])
+            clade.add_nodes([new_node1, new_node2, new_node3])
             
         
             #Get the connection points
@@ -297,15 +299,15 @@ def partition_gene_trees(gene_map : dict[str, list[str]], num_retic : int = 1, r
             d : Node = connecting_edges[1][0]
             
             #Add the clade's nodes/edges now that the connection points have been selected
-            simple_network.addNodes(clade.nodes)
-            simple_network.addEdges(clade.edges, as_list=True)
+            simple_network.add_nodes(clade.nodes)
+            simple_network.add_edges(clade.edges, as_list=True)
             
             #remove and add back edges
-            simple_network.removeEdge([b, a])
+            simple_network.remove_edge([b, a])
        
-            simple_network.removeEdge([d, c])
+            simple_network.remove_edge([d, c])
            
-            simple_network.addEdges([[new_node2, a], [b, new_node2], [new_node3, c], [d, new_node3]], as_list=True)
+            simple_network.add_edges([[new_node2, a], [b, new_node2], [new_node3, c], [d, new_node3]], as_list=True)
             
    
             #handle the parent bindings
@@ -634,7 +636,6 @@ class MUL(DAG):
         self.rng = rng
         
         
-
     def subtree_copy(self, net : DAG, retic_node : Node) -> DAG:
         """
         Make a copy of a subnetwork of a network *net* rooted at *retic_node*, with unique node names
@@ -698,9 +699,9 @@ class MUL(DAG):
         network_2_mul : dict[Node, Node] = {node : Node(name = node.get_name()) for node in net.nodes}
         
         #Add all nodes and edges from net into the mul tree
-        mul_tree.addNodes(list(network_2_mul.values()))
+        mul_tree.add_nodes(list(network_2_mul.values()))
         for edge in net.edges:
-            mul_tree.addEdges([network_2_mul[edge[0]], network_2_mul[edge[1]]])
+            mul_tree.add_edges([network_2_mul[edge[0]], network_2_mul[edge[1]]])
         
         
         #Bottom-Up traversal starting at leaves. Algorithm from STEP 1 in : https://doi.org/10.1371/journal.pgen.1002660
@@ -720,10 +721,10 @@ class MUL(DAG):
                 retic_pars = mul_tree.get_parents(cur)
                 a = retic_pars[0]
                 b = retic_pars[1]
-                mul_tree.removeEdge([b, cur])
-                mul_tree.addEdges([b, subtree.root()[0]])
-                mul_tree.addNodes(subtree.nodes)
-                mul_tree.addEdges(subtree.edges, as_list=True)
+                mul_tree.remove_edge([b, cur])
+                mul_tree.add_edges([b, subtree.root()[0]])
+                mul_tree.add_nodes(subtree.nodes)
+                mul_tree.add_edges(subtree.edges, as_list=True)
                 processed.add(subtree.root()[0])
             
             
@@ -743,8 +744,6 @@ class MUL(DAG):
             mul_tree.update_node_name(leaf, new_name)
 
         self.mul = mul_tree  
-        print(f"This mul tree has {len(self.mul.edges)} edges")
-        print(self.mul.to_newick())
         return mul_tree             
         
     def extra_lineages(self, coal_event_map : dict, f:dict)-> int:
@@ -997,7 +996,7 @@ class MULNode(CalculationNode):
     
     def calc(self):
         
-        model_children = self.get_predecessors()
+        model_children = self.get_model_parents()
         if len(model_children) == 1:
             if type(model_children[0]) is NetworkContainer:
                 self.multree.to_mul(model_children[0].get())
@@ -1030,7 +1029,7 @@ class GeneTreesComponent(StateNode):
     
     def update(self, new_tree : DAG, index : int):
         self.gene_trees[index] = new_tree
-        model_parents : list[CalculationNode] = self.get_successors()
+        model_parents : list[CalculationNode] = self.get_model_children()
         if len(model_parents) == 1:
             model_parents[0].upstream()
         else: 
@@ -1046,7 +1045,7 @@ class ParsimonyScore(CalculationNode):
         
     
     def calc(self):
-        model_children = self.get_predecessors()
+        model_children = self.get_model_parents()
         
         
         if len(model_children) == 2:
