@@ -2,7 +2,7 @@
 Author : Mark Kessler
 Last Stable Edit : 7/16/23
 First Included in Version : 0.1.0
-
+Approved to Release Date : N/A
 """
 
 from State import State
@@ -95,7 +95,7 @@ class HillClimbing:
         
 
         while iter_no < self.num_iter:
-            print(" --- NEXT ITERATION ---")
+            
             # propose a new state
             next_move = self.kernel.generate()
           
@@ -109,9 +109,7 @@ class HillClimbing:
                 
                 delta : float = cur_state_likelihood - proposed_state_likelihood
                 accepted : bool = True 
-                if cur_state_likelihood == -10 and proposed_state_likelihood == -30:
-                    print(f"Current State Likelihood: {cur_state_likelihood}")
-                    print(f"Proposed State Likelihood: {proposed_state_likelihood}")
+                
                     
                 if delta <= 0:
                     self.current_state.commit(next_move)  
